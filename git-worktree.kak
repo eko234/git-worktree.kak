@@ -36,7 +36,7 @@ define-command update-worktree-current-branch %{
   evaluate-commands %sh{
     branch=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --abbrev-ref HEAD 2>/dev/null)
     if [ -n "${branch}" ]; then
-      printf 'set window worktree_current_branch %%{%s}' "${branch}"
+      printf 'set-option global worktree_current_branch %%{%s}' "${branch}"
     fi
   }
 }
@@ -58,7 +58,7 @@ define-command worktree-add-branch -override -params 1 -shell-script-completion 
 
 define-command worktree-goto-local-branch -override -params 1 -shell-script-completion %{
   cd "$kak_opt_worktree_directory"
-  git branch | cut -d' ' -f2 | grep -v "$kak_opt_worktree_current_branch"
+  git branch | cut -d' ' -f2 | grep -v $kak_opt_worktree_current_branch
 } %{
   evaluate-commands %{
     cd "%opt{worktree_directory}/%arg{1}"
