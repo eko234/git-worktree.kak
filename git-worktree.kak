@@ -1,5 +1,6 @@
 declare-option str worktree_directory
 declare-option str worktree_current_branch
+declare-option bool worktree_magic_match
 
 # here comes the tricky part, as one may want to keep the buffer list when going
 # to another, we should suppose there is no plugin to handle buffers and regs as I currently
