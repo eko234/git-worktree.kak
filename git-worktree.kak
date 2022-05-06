@@ -1,4 +1,5 @@
 declare-option str worktree_directory
+declare-option str worktree_current_branch
 
 # return the dir of the nearest worktree
 # if there is none, we assume we failed and there is
@@ -19,18 +20,30 @@ declare-option str worktree_directory
 # to know what a user might want to happen when doing so, for example, I would want to
 # rematch my recent buffers
 
-hook global KakBegin .* %{
+define-command update-worktree-directory -override %{
   evaluate-commands %sh{
-    if [ -z $kak_opt_worktree_directory ]; then
-      while [ "$PWD" != "/" ]; do
-        if [ -d worktrees ]; then
-          printf %s\\n "set-option global worktree_directory '$PWD'"
-          break
-        fi
-        cd ..
-      done
+    while [ "$PWD" != "/" ]; do
+      if [ -d worktrees ]; then
+        printf %s\\n "set-option global worktree_directory '$PWD'"
+        break
+      fi
+      cd ..
+    done
+  }
+}
+
+define-command update-worktree-current-branch %{
+  evaluate-commands %sh{
+    branch=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    if [ -n "${branch}" ]; then
+      printf 'set window worktree_current_branch %%{%s}' "${branch}"
     fi
   }
+}
+
+hook global KakBegin .* %{
+  update-worktree-directory
+  update-worktree-current-branch
 }
 
 define-command worktree-add-branch -override -params 1 -shell-script-completion %{
@@ -45,9 +58,11 @@ define-command worktree-add-branch -override -params 1 -shell-script-completion 
 
 define-command worktree-goto-local-branch -override -params 1 -shell-script-completion %{
   cd "$kak_opt_worktree_directory"
-  git branch | cut -d' ' -f2
+  git branch | cut -d' ' -f2 | grep -v "$kak_opt_worktree_current_branch"
 } %{
   evaluate-commands %{
     cd "%opt{worktree_directory}/%arg{1}"
+    update-worktree-directory
+    update-worktree-current-branch
   }
 }
