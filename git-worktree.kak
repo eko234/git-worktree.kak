@@ -24,7 +24,7 @@ define-command update-worktree-directory -override %{
 
 define-command update-worktree-current-branch %{
   evaluate-commands %sh{
-    branch=$(git rev-parse --show-toplevel 2>/dev/null)
+    branch=$(basename $(git rev-parse --show-toplevel 2>/dev/null))
     if [ -n "${branch}" ]; then
       printf 'set-option global worktree_current_branch %%{%s}' "${branch}"
     fi
