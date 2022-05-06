@@ -49,7 +49,7 @@ define-command worktree-add-branch -override -params 1 -shell-script-completion 
 
 define-command worktree-goto-local-branch -override -params 1 -shell-script-completion %{
   cd "$kak_opt_worktree_directory"
-  git branch | cut -d' ' -f2 | grep -v $kak_opt_worktree_current_branch
+  git branch | cut -d' ' -f2 | grep -v "$kak_opt_worktree_current_branch"
 } %{
   evaluate-commands %{
     cd "%opt{worktree_directory}/%arg{1}"
