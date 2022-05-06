@@ -1,18 +1,6 @@
 declare-option str worktree_directory
 declare-option str worktree_current_branch
 
-# return the dir of the nearest worktree
-# if there is none, we assume we failed and there is
-# no such dir, it can be stored in an option, after all
-# I cant think of a reason for it to change as it should
-# be an absolute path
-
-# if the option is not empty, list the valid branches to
-# create one
-
-# if the option is not empty, list the valid EXISTING IN LOCAL branches
-# to go to one
-
 # here comes the tricky part, as one may want to keep the buffer list when going
 # to another, we should suppose there is no plugin to handle buffers and regs as I currently
 # do, also the local kakrc, if user uses one, should be in the worktree dir to be caught, we should
@@ -22,13 +10,15 @@ declare-option str worktree_current_branch
 
 define-command update-worktree-directory -override %{
   evaluate-commands %sh{
-    while [ "$PWD" != "/" ]; do
-      if [ -d worktrees ]; then
-        printf %s\\n "set-option global worktree_directory '$PWD'"
-        break
-      fi
-      cd ..
-    done
+    if [ -z $kak_opt_worktree_directory ]; then
+      while [ "$PWD" != "/" ]; do
+        if [ -d worktrees ]; then
+          printf %s\\n "set-option global worktree_directory '$PWD'"
+          break
+        fi
+        cd ..
+      done
+    fi
   }
 }
 
