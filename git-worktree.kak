@@ -47,7 +47,7 @@ define-command worktree-add-branch -override -params 1 -shell-script-candidates 
   }
 }
 
-define-command worktree-goto-local-branch -override -params 1 -shell-script-candidates %{
+define-command worktree-goto-branch -override -params 1 -shell-script-candidates %{
   cd "$kak_opt_worktree_directory"
   git branch | cut -d' ' -f2 | grep -v "'$kak_opt_worktree_current_branch\|^$'"
 } %{
