@@ -24,7 +24,7 @@ define-command update-worktree-directory -override %{
 
 define-command update-worktree-current-branch %{
   evaluate-commands %sh{
-    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    branch=$(git rev-parse --show-toplevel 2>/dev/null)
     if [ -n "${branch}" ]; then
       printf 'set-option global worktree_current_branch %%{%s}' "${branch}"
     fi
@@ -42,7 +42,8 @@ define-command worktree-add-branch -override -params 1 -shell-script-completion 
 } %{
   evaluate-commands %sh{
     cd "$kak_opt_worktree_directory"
-    git worktree add $1
+    git worktree add $1 2>&1/dev/null
+    echo "branch added"
   }
 }
 
