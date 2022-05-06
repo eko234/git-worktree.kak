@@ -34,7 +34,7 @@ define-command update-worktree-directory -override %{
 
 define-command update-worktree-current-branch %{
   evaluate-commands %sh{
-    branch=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
     if [ -n "${branch}" ]; then
       printf 'set-option global worktree_current_branch %%{%s}' "${branch}"
     fi
