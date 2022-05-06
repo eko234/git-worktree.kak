@@ -36,20 +36,19 @@ hook global KakBegin .* %{
   update-worktree-current-branch
 }
 
-define-command worktree-add-branch -override -params 1 -shell-script-completion %{
+define-command worktree-add-branch -override -params 1 -shell-script-candidates %{
   cd "$kak_opt_worktree_directory"
   git branch -r | cut -d' ' -f2
 } %{
   evaluate-commands %sh{
     cd "$kak_opt_worktree_directory"
-    git worktree add $1 2>&1/dev/null
-    echo "branch added"
+    git worktree add $1 > /dev/null  && echo "echo branch $1 added" || echo "echo error adding branch $1"
   }
 }
 
-define-command worktree-goto-local-branch -override -params 1 -shell-script-completion %{
+define-command worktree-goto-local-branch -override -params 1 -shell-script-candidates %{
   cd "$kak_opt_worktree_directory"
-  git branch | cut -d' ' -f2 | grep -v "$kak_opt_worktree_current_branch"
+  git branch | cut -d' ' -f2 | grep -v "'$kak_opt_worktree_current_branch\|^$'"
 } %{
   evaluate-commands %{
     cd "%opt{worktree_directory}/%arg{1}"
